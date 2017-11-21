@@ -16,7 +16,7 @@ import java.sql.SQLException;
 public class ConectionFactory {
     public Connection conecta(){
         try{
-            return DriverManager.getConnection("jdbc:mysql://localhost/prad","root","");
+            return DriverManager.getConnection("jdbc:postgresql://localhost/banco","postgres","123");
         }catch(SQLException ex){
             throw new RuntimeException(ex);
         }

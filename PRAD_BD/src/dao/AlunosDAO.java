@@ -5,57 +5,37 @@
  */
 package dao;
 
-import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import javabeans.Clientes;
+import java.util.List;
+import javabeans.Alunos;
+import javax.swing.JOptionPane;
 import jdbc.ConectionFactory;
+
 /**
  *
  * @author Suporte
  */
-public class ClientesDAO {
+public class AlunosDAO {
     private Connection conecta;
-    
-    public ClientesDAO(){
+    public AlunosDAO(){
         this.conecta = new ConectionFactory().conecta();
     }
-    public List<Clientes> listarClientesPorNome(String nome){
+    public List<Alunos> listarAlunos(){
         try{
-            List<Clientes> lista = new ArrayList<Clientes>();
-            String Sql="select * from cliente where cli_nome like ?";
-            PreparedStatement stmt = conecta.prepareStatement(Sql);
-            stmt.setString(1,"%"+nome+"%");
-            
-            ResultSet rs = stmt.executeQuery();
-            while(rs.next()){
-                Clientes c = new Clientes();
-                c.setId(rs.getInt("cli_codigo"));
-                c.setNome(rs.getString("cli_nome"));
-                c.setEmail(rs.getString("cli_email"));
-                c.setTelefone(rs.getString("cli_telefone"));
-                lista.add(c);
-            }
-            return lista;
-        }catch(SQLException erro){
-            throw new RuntimeException(erro);
-        }
-    }
-    public List<Clientes> listarClientes(){
-        try{
-            List<Clientes> lista = new ArrayList<Clientes>();
-            String Sql = "select * from cliente";
+            List<Alunos> lista = new ArrayList<Alunos>();
+            String Sql = "select * from alunos ORDER BY \"A_ID\" ";
             PreparedStatement stmt = conecta.prepareStatement(Sql);
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
-                Clientes c = new Clientes();
-                c.setId(rs.getInt("cli_codigo"));
-                c.setNome(rs.getString("cli_nome"));
-                c.setEmail(rs.getString("cli_email"));
-                c.setTelefone(rs.getString("cli_telefone"));
+                Alunos c = new Alunos();
+                c.setId(rs.getInt("A_ID"));
+                c.setNome(rs.getString("A_NOME"));
+                c.setEmail(rs.getString("A_EMAIL"));
+                c.setTelefone(rs.getString("A_TELEFONE"));
                 lista.add(c);
             }
         
@@ -64,15 +44,33 @@ public class ClientesDAO {
             throw new RuntimeException(erro);
         }
     }
-    public void cadastrarCliente(Clientes obj)
+    public List<Alunos> listarAlunosPorNome(String nome){
+        try{
+            List<Alunos> lista = new ArrayList<Alunos>();
+            String Sql="select * from alunos where \"A_NOME\" like ?";
+            PreparedStatement stmt = conecta.prepareStatement(Sql);
+            stmt.setString(1,"%"+nome+"%");
+            
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                Alunos c = new Alunos();
+                c.setId(rs.getInt("A_ID"));
+                c.setNome(rs.getString("A_NOME"));
+                c.setEmail(rs.getString("A_EMAIL"));
+                c.setTelefone(rs.getString("A_TELEFONE"));
+                lista.add(c);
+            }
+            return lista;
+        }catch(SQLException erro){
+            throw new RuntimeException(erro);
+        }
+    }
+    public void removerAluno(Alunos obj)
     {
         try{
-            String cmdsql = "insert into cliente(cli_nome, cli_email, cli_telefone) values (?,?,?)";
+            String cmdsql = "DELETE FROM alunos WHERE \"A_ID\"=?";
             PreparedStatement stmt = conecta.prepareStatement(cmdsql);
-            stmt.setString(1, obj.getNome());
-            stmt.setString(2, obj.getEmail());
-            stmt.setString(3, obj.getTelefone());
-            
+            stmt.setInt(1, obj.getId());
             stmt.execute();
             
             stmt.close();
@@ -81,10 +79,28 @@ public class ClientesDAO {
            throw new RuntimeException(erro); 
         }
     }
-    public void alterarCliente(Clientes obj)
+    
+    public void cadastrarAluno(Alunos obj)
     {
         try{
-            String cmdsql = "update cliente set cli_nome=?, cli_email=?, cli_telefone=? where cli_codigo=?";
+            String cmdsql = "INSERT INTO public.alunos(\"A_NOME\",\"A_EMAIL\",\"A_TELEFONE\") VALUES (?,?,?)";
+            PreparedStatement stmt = conecta.prepareStatement(cmdsql);
+
+            stmt.setString(1, obj.getNome());
+            stmt.setString(2, obj.getEmail());
+            stmt.setString(3, obj.getTelefone());
+            stmt.execute();
+            
+            stmt.close();
+            
+        }catch(SQLException erro){
+           throw new RuntimeException(erro); 
+        }
+    }
+    public void alterarAluno(Alunos obj)
+    {
+        try{
+            String cmdsql = "update alunos set \"A_NOME\"=?,\"A_EMAIL\"=?,\"A_TELEFONE\"=? where \"A_ID\"=?";
             PreparedStatement stmt = conecta.prepareStatement(cmdsql);
             stmt.setString(1, obj.getNome());
             stmt.setString(2, obj.getEmail());
@@ -97,21 +113,5 @@ public class ClientesDAO {
         }catch(SQLException erro){
            throw new RuntimeException(erro); 
         }
-    }
-    
-    public boolean efetuarLogin(String email,String senha){
-        try{
-            String cmdsql = "select * from cliente where cli_email=? and cli_senha=?";
-            PreparedStatement stmt = conecta.prepareStatement(cmdsql);
-            stmt.setString(1,email);
-            stmt.setString(2,senha);
-            ResultSet rs = stmt.executeQuery();
-            if(rs.first()){
-                return true;
-            }
-        }catch(SQLException erro){
-           throw new RuntimeException(erro); 
-        }
-        return false;
     }
 }

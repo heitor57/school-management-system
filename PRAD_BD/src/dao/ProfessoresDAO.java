@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javabeans.Cidades;
+import javabeans.Professores;
 import javax.swing.JOptionPane;
 import jdbc.ConectionFactory;
 
@@ -19,35 +19,23 @@ import jdbc.ConectionFactory;
  *
  * @author Suporte
  */
-public class CidadesDAO {
+public class ProfessoresDAO {
     private Connection conecta;
-    public CidadesDAO(){
+    public ProfessoresDAO(){
         this.conecta = new ConectionFactory().conecta();
     }
-    public int getCidade(String nome){
+    public List<Professores> listarProfessores(){
         try{
-            String Sql = "SELECT * FROM cidade,uf WHERE CID_UF=iduf AND sigla = ?";
-            PreparedStatement stmt = conecta.prepareStatement(Sql);
-            stmt.setString(1,nome);
-            ResultSet rs = stmt.executeQuery();
-            rs.next();
-            return rs.getInt("cid_uf");
-        }catch (Exception e){
-            JOptionPane.showMessageDialog(null,e);
-        }
-        return -1;
-    }
-    public List<Cidades> listarCidades(){
-        try{
-            List<Cidades> lista = new ArrayList<Cidades>();
-            String Sql = "select * from cidade";
+            List<Professores> lista = new ArrayList<Professores>();
+            String Sql = "select * from professores ORDER BY \"P_ID\" ";
             PreparedStatement stmt = conecta.prepareStatement(Sql);
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
-                Cidades c = new Cidades();
-                c.setId(rs.getInt("cid_codigo"));
-                c.setNome(rs.getString("cid_nome"));
-                c.setUf(rs.getInt("cid_uf"));
+                Professores c = new Professores();
+                c.setId(rs.getInt("P_ID"));
+                c.setNome(rs.getString("P_NOME"));
+                c.setEmail("P_EMAIL");
+                c.setTelefone("P_TELEFONE");
                 lista.add(c);
             }
         
@@ -56,13 +44,13 @@ public class CidadesDAO {
             throw new RuntimeException(erro);
         }
     }
-    public void cadastrarCidade(Cidades obj)
+    public void cadastrarProfessor(Professores obj)
     {
         try{
-            String cmdsql = "insert into cidade(cid_nome, cid_uf) values (?,?)";
+            String cmdsql = "INSERT INTO public.professores(\"P_NOME\") VALUES (?);";
             PreparedStatement stmt = conecta.prepareStatement(cmdsql);
+
             stmt.setString(1, obj.getNome());
-            stmt.setInt(2, obj.getUf());
             stmt.execute();
             
             stmt.close();
@@ -71,14 +59,13 @@ public class CidadesDAO {
            throw new RuntimeException(erro); 
         }
     }
-    public void alterarCidade(Cidades obj)
+    public void alterarProfessor(Professores obj)
     {
         try{
-            String cmdsql = "update cidade set cid_nome=?, cid_uf=? where cid_codigo=?";
+            String cmdsql = "update professores set \"P_NOME\"=? where \"P_ID\"=?";
             PreparedStatement stmt = conecta.prepareStatement(cmdsql);
             stmt.setString(1, obj.getNome());
-            stmt.setInt(2, obj.getUf());
-            stmt.setInt(3, obj.getId());
+            stmt.setInt(2, obj.getId());
             stmt.execute();
             
             stmt.close();
