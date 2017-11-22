@@ -5,7 +5,9 @@
  */
 package layout;
 
-import dao.ClientesDAO;
+import dao.AlunosDAO;
+import dao.UsuarioDAO;
+import javabeans.Usuario;
 import javax.swing.JOptionPane;
 
 /**
@@ -20,6 +22,7 @@ public class TeladeLogin extends javax.swing.JDialog {
     public TeladeLogin(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setSize(570,400);
     }
 
     /**
@@ -37,18 +40,29 @@ public class TeladeLogin extends javax.swing.JDialog {
         txtemail = new javax.swing.JTextField();
         btlogar = new javax.swing.JButton();
         txtsenha = new javax.swing.JPasswordField();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Login");
+        setSize(400,600);
+        getContentPane().setLayout(null);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 48)); // NOI18N
         jLabel1.setText("Tela de Login");
+        getContentPane().add(jLabel1);
+        jLabel1.setBounds(123, 50, 286, 58);
 
         lblemail.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lblemail.setText("E-mail:");
+        getContentPane().add(lblemail);
+        lblemail.setBounds(37, 149, 55, 22);
 
         lblsenha.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lblsenha.setText("Senha:");
+        getContentPane().add(lblsenha);
+        lblsenha.setBounds(38, 190, 54, 22);
+        getContentPane().add(txtemail);
+        txtemail.setBounds(124, 143, 339, 30);
 
         btlogar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btlogar.setText("Logar");
@@ -57,48 +71,14 @@ public class TeladeLogin extends javax.swing.JDialog {
                 btlogarActionPerformed(evt);
             }
         });
+        getContentPane().add(btlogar);
+        btlogar.setBounds(220, 230, 103, 31);
+        getContentPane().add(txtsenha);
+        txtsenha.setBounds(124, 184, 339, 30);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(37, 37, 37)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lblsenha)
-                            .addComponent(lblemail))
-                        .addGap(32, 32, 32)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtemail)
-                            .addComponent(txtsenha, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(123, 123, 123)
-                        .addComponent(jLabel1)))
-                .addContainerGap(64, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(btlogar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(180, 180, 180))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addComponent(jLabel1)
-                .addGap(41, 41, 41)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblemail)
-                    .addComponent(txtemail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(24, 24, 24)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblsenha)
-                    .addComponent(txtsenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(37, 37, 37)
-                .addComponent(btlogar, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(74, Short.MAX_VALUE))
-        );
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/LogoCEFET_formato-JPG.jpg"))); // NOI18N
+        getContentPane().add(jLabel3);
+        jLabel3.setBounds(30, 10, 484, 314);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -111,11 +91,10 @@ public class TeladeLogin extends javax.swing.JDialog {
             
             email = txtemail.getText();
             senha = new String(txtsenha.getPassword()).trim();
-
-            ClientesDAO dao = new ClientesDAO();
-            
+            UsuarioDAO dao = new UsuarioDAO();
+            System.out.println(dao.efetuarLogin(email, senha));
             if(dao.efetuarLogin(email, senha)){
-                Cliente telacliente = new Cliente (null, rootPaneCheckingEnabled);
+                Principal telacliente = new Principal ();
                 this.dispose();    
                 telacliente.setVisible(true);
                  
@@ -174,6 +153,7 @@ public class TeladeLogin extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btlogar;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel lblemail;
     private javax.swing.JLabel lblsenha;
     private javax.swing.JTextField txtemail;

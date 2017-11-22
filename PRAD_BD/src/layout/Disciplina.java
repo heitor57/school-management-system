@@ -6,10 +6,13 @@
 package layout;
 
 import dao.AlunosDAO;
+import dao.DisciplinasDAO;
+import dao.ProfessoresDAO;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
-import javabeans.Alunos;
+import javabeans.Disciplinas;
+import javabeans.Professores;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -17,21 +20,20 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Suporte
  */
-public class Aluno extends javax.swing.JDialog {
-    AlunosDAO dao;
+public class Disciplina extends javax.swing.JDialog {
+    DisciplinasDAO dao;
     /**
      * Creates new form Cidade
      */
-    public Aluno(java.awt.Frame parent, boolean modal) {
+    public Disciplina(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
-    public Aluno(Alunos obj){
+    public Disciplina(Disciplinas obj){
         initComponents();
         txtcodigo.setText(String.valueOf(obj.getId()));
         txtnome.setText(obj.getNome());
-        txtemail1.setText(obj.getEmail());
-        txttelefone.setText(obj.getTelefone());
+        txtdescricao.setText(obj.getDescricao());
     }
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -60,7 +62,7 @@ public class Aluno extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                Aluno dialog = new Aluno(new javax.swing.JFrame(), true);
+                Disciplina dialog = new Disciplina(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -82,25 +84,31 @@ public class Aluno extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        txtprof = new javax.swing.JTextField();
         txtcodigo = new javax.swing.JTextField();
         txtnome = new javax.swing.JTextField();
         btnovo = new javax.swing.JButton();
         btsalvar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tabelaalunos = new javax.swing.JTable();
+        tabeladisciplina = new javax.swing.JTable();
         btatualizar = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         btbuscar = new javax.swing.JButton();
         txtnomebusca = new javax.swing.JTextField();
-        txtemail1 = new javax.swing.JTextField();
-        txttelefone = new javax.swing.JFormattedTextField();
+        txtdescricao = new javax.swing.JTextField();
         btremover = new javax.swing.JButton();
+        cboprof = new javax.swing.JComboBox<>();
+
+        txtprof.setText("jTextField1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Aluno");
+        setTitle("Disciplina");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowActivated(java.awt.event.WindowEvent evt) {
                 formWindowActivated(evt);
+            }
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
             }
         });
 
@@ -128,20 +136,20 @@ public class Aluno extends javax.swing.JDialog {
             }
         });
 
-        tabelaalunos.setModel(new javax.swing.table.DefaultTableModel(
+        tabeladisciplina.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Codigo", "Nome", "Email", "Telefone"
+                "Codigo", "Nome", "Descrição", "Codigo Prof"
             }
         ));
-        tabelaalunos.addMouseListener(new java.awt.event.MouseAdapter() {
+        tabeladisciplina.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tabelaalunosMouseClicked(evt);
+                tabeladisciplinaMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(tabelaalunos);
+        jScrollPane1.setViewportView(tabeladisciplina);
 
         btatualizar.setText("Atualizar");
         btatualizar.addActionListener(new java.awt.event.ActionListener() {
@@ -186,19 +194,19 @@ public class Aluno extends javax.swing.JDialog {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        txtemail1.setBorder(javax.swing.BorderFactory.createTitledBorder("Email"));
-
-        txttelefone.setBorder(javax.swing.BorderFactory.createTitledBorder("Telefone"));
-        try {
-            txttelefone.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("(##)####-####")));
-        } catch (java.text.ParseException ex) {
-            ex.printStackTrace();
-        }
+        txtdescricao.setBorder(javax.swing.BorderFactory.createTitledBorder("Descrição"));
 
         btremover.setText("Remover");
         btremover.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btremoverActionPerformed(evt);
+            }
+        });
+
+        cboprof.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecione um professor" }));
+        cboprof.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboprofItemStateChanged(evt);
             }
         });
 
@@ -212,7 +220,6 @@ public class Aluno extends javax.swing.JDialog {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txttelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(txtcodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(58, 58, 58)
@@ -227,7 +234,8 @@ public class Aluno extends javax.swing.JDialog {
                                         .addComponent(btremover))))
                             .addComponent(txtnome, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtemail1, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtdescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cboprof, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 37, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -249,9 +257,9 @@ public class Aluno extends javax.swing.JDialog {
                             .addComponent(btatualizar)
                             .addComponent(btremover))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txttelefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(13, 13, 13)
-                .addComponent(txtemail1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtdescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cboprof, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -272,14 +280,27 @@ public class Aluno extends javax.swing.JDialog {
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
         Listar();
+        
     }//GEN-LAST:event_formWindowActivated
 
-    private void tabelaalunosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelaalunosMouseClicked
-        txtcodigo.setText(tabelaalunos.getValueAt(tabelaalunos.getSelectedRow(),0).toString());
-        txtnome.setText(tabelaalunos.getValueAt(tabelaalunos.getSelectedRow(),1).toString());
-        txtemail1.setText(tabelaalunos.getValueAt(tabelaalunos.getSelectedRow(),2).toString());
-        txttelefone.setText(tabelaalunos.getValueAt(tabelaalunos.getSelectedRow(),3).toString());
-    }//GEN-LAST:event_tabelaalunosMouseClicked
+    private void tabeladisciplinaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabeladisciplinaMouseClicked
+        txtcodigo.setText(tabeladisciplina.getValueAt(tabeladisciplina.getSelectedRow(),0).toString());
+        txtnome.setText(tabeladisciplina.getValueAt(tabeladisciplina.getSelectedRow(),1).toString());
+        txtdescricao.setText(tabeladisciplina.getValueAt(tabeladisciplina.getSelectedRow(),2).toString());
+        DisciplinasDAO disciplina = new DisciplinasDAO();
+        try{
+            ProfessoresDAO dao_t = new ProfessoresDAO();
+            List<Professores> lista = dao_t.listarProfessores();
+            
+            for(Professores u:lista){
+                
+                if(u.getId() == Integer.parseInt(tabeladisciplina.getValueAt(tabeladisciplina.getSelectedRow(),3).toString()))
+                {    cboprof.setSelectedItem(u.getNome());break;}
+            }
+        }catch(Exception e){
+
+        }
+    }//GEN-LAST:event_tabeladisciplinaMouseClicked
 
     private void btatualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btatualizarActionPerformed
         Atualizar();
@@ -301,6 +322,32 @@ public class Aluno extends javax.swing.JDialog {
         Remover();
     }//GEN-LAST:event_btremoverActionPerformed
 
+    private void cboprofItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboprofItemStateChanged
+        if(cboprof.getSelectedItem().toString() != cboprof.getItemAt(0)){
+            DisciplinasDAO disciplina = new DisciplinasDAO();
+            try{
+                
+                txtprof.setText(String.valueOf(disciplina.getProfessor(cboprof.getSelectedItem().toString())));
+            }catch(Exception e){
+
+            }
+        }
+    }//GEN-LAST:event_cboprofItemStateChanged
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        try{
+            
+            ProfessoresDAO dao_t = new ProfessoresDAO();
+            List<Professores> lista = dao_t.listarProfessores();
+            for(Professores u:lista){
+                cboprof.addItem(u.getNome());
+            }
+                    
+        }catch(Exception e){
+            
+        }
+    }//GEN-LAST:event_formWindowOpened
+
     /**
      * @param args the command line arguments
      */
@@ -312,30 +359,30 @@ public class Aluno extends javax.swing.JDialog {
     private javax.swing.JButton btnovo;
     private javax.swing.JButton btremover;
     private javax.swing.JButton btsalvar;
+    private javax.swing.JComboBox<String> cboprof;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tabelaalunos;
+    private javax.swing.JTable tabeladisciplina;
     private javax.swing.JTextField txtcodigo;
-    private javax.swing.JTextField txtemail1;
+    private javax.swing.JTextField txtdescricao;
     private javax.swing.JTextField txtnome;
     private javax.swing.JTextField txtnomebusca;
-    private javax.swing.JFormattedTextField txttelefone;
+    private javax.swing.JTextField txtprof;
     // End of variables declaration//GEN-END:variables
 
     void Novo(){
         txtcodigo.setText(null);
         txtnome.setText(null);
-        txtemail1.setText(null);
-        txttelefone.setText(null);
+        txtdescricao.setText(null);
         txtnome.requestFocus();
     }
     void Remover(){
         try{
             
-            Alunos obj = new Alunos();
+            Disciplinas obj = new Disciplinas();
             obj.setId(Integer.parseInt(txtcodigo.getText()));
-            dao = new AlunosDAO();
-            dao.removerAluno(obj);
+            dao = new DisciplinasDAO();
+            dao.removerDisciplina(obj);
             
             JOptionPane.showMessageDialog(null,"Operação feita realizado com sucesso");
         } catch(Exception e){
@@ -346,12 +393,12 @@ public class Aluno extends javax.swing.JDialog {
     void Salvar(){
         try{
             
-            Alunos obj = new Alunos();
+            Disciplinas obj = new Disciplinas();
             obj.setNome(txtnome.getText());
-            obj.setEmail(txtemail1.getText());
-            obj.setTelefone(txttelefone.getText());
-            dao = new AlunosDAO();
-            dao.cadastrarAluno(obj);
+            obj.setDescricao(txtdescricao.getText());
+            obj.setPid(Integer.parseInt(txtprof.getText()));
+            dao = new DisciplinasDAO();
+            dao.cadastrarDisciplina(obj);
             
             JOptionPane.showMessageDialog(null,"Cadastro realizado com sucesso");
         } catch(Exception e){
@@ -361,17 +408,17 @@ public class Aluno extends javax.swing.JDialog {
     }
     void Listar(){
         try{
-            AlunosDAO dao = new AlunosDAO();
-            List<Alunos> listaralunos = dao.listarAlunos();
-            DefaultTableModel modelo = (DefaultTableModel) tabelaalunos.getModel();
+            DisciplinasDAO dao = new DisciplinasDAO();
+            List<Disciplinas> listaralunos = dao.listarDisciplinas();
+            DefaultTableModel modelo = (DefaultTableModel) tabeladisciplina.getModel();
             modelo.setNumRows(0);
             
-            for(Alunos lc : listaralunos){
+            for(Disciplinas lc : listaralunos){
                 modelo.addRow(new Object[]{
                         lc.getId(),
                         lc.getNome(),
-                        lc.getEmail(),
-                        lc.getTelefone()
+                        lc.getDescricao(),
+                        lc.getPid()
                         });
             }
         }catch(Exception e){
@@ -380,14 +427,14 @@ public class Aluno extends javax.swing.JDialog {
     }
     void Atualizar(){
         try{
-            Alunos obj = new Alunos();
+            Disciplinas obj = new Disciplinas();
             obj.setId(Integer.parseInt(txtcodigo.getText()));
             obj.setNome(txtnome.getText());
-            obj.setEmail(txtemail1.getText());
-            obj.setTelefone(txttelefone.getText());
+            obj.setDescricao(txtdescricao.getText());
+            obj.setPid(Integer.parseInt(txtprof.getText()));
             
-            dao = new AlunosDAO();
-            dao.alterarAluno(obj);
+            dao = new DisciplinasDAO();
+            dao.alterarDisciplina(obj);
             JOptionPane.showMessageDialog(null,"Dados alterados com sucesso");
             
         } catch(Exception e){
@@ -397,21 +444,21 @@ public class Aluno extends javax.swing.JDialog {
     }
     void Buscar(){
         try{
-            AlunosDAO dao = new AlunosDAO();
-            List<Alunos> listarclientes = dao.listarAlunosPorNome(txtnomebusca.getText());
-            DefaultTableModel modelo = (DefaultTableModel) tabelaalunos.getModel();
+            DisciplinasDAO dao = new DisciplinasDAO();
+            List<Disciplinas> listarclientes = dao.listarDisciplinasPorNome(txtnomebusca.getText());
+            DefaultTableModel modelo = (DefaultTableModel) tabeladisciplina.getModel();
             modelo.setNumRows(0);
             
-            for(Alunos lc : listarclientes){
+            for(Disciplinas lc : listarclientes){
                 txtcodigo.setText(String.valueOf((lc.getId())));
                 txtnome.setText(lc.getNome());
-                txtemail1.setText(lc.getEmail());
-                txttelefone.setText(lc.getTelefone());
+                txtdescricao.setText(lc.getDescricao());
+                txtprof.setText(String.valueOf(lc.getPid()));
                 modelo.addRow(new Object[]{
                         lc.getId(),
                         lc.getNome(),
-                        lc.getEmail(),
-                        lc.getTelefone()
+                        lc.getDescricao(),
+                        lc.getPid()
                         });
             }
         }catch(Exception e){

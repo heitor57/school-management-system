@@ -4,16 +4,16 @@
  * and open the template in the editor.
  */
 package layout;
-import dao.ClientesDAO;
+import dao.AlunosDAO;
 import java.util.List;
-import javabeans.Clientes;
+import javabeans.Alunos;
 import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author Heitor
  */
 public class FrmConsulta extends javax.swing.JDialog {
-    Cliente tcliente;
+    Aluno taluno;
     /**
      * Creates new form FrmConsulta
      */
@@ -58,7 +58,7 @@ public class FrmConsulta extends javax.swing.JDialog {
         jScrollPane1.setViewportView(tabelacliente);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-        jLabel1.setText("Lista de Clientes");
+        jLabel1.setText("Lista de Alunos");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -88,27 +88,27 @@ public class FrmConsulta extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tabelaclienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelaclienteMouseClicked
-        Clientes obj = new Clientes();
+        Alunos obj = new Alunos();
         obj.setId(Integer.parseInt((tabelacliente.getValueAt(tabelacliente.getSelectedRow(),0).toString())));
         obj.setNome((tabelacliente.getValueAt(tabelacliente.getSelectedRow(),1).toString()));
         obj.setEmail(tabelacliente.getValueAt(tabelacliente.getSelectedRow(),2).toString());
         obj.setTelefone(tabelacliente.getValueAt(tabelacliente.getSelectedRow(),3).toString());
-        if(tcliente != null)
-        tcliente.dispose();
-        tcliente= new Cliente(obj);
-        tcliente.setVisible(true);
+        if(taluno != null)
+        taluno.dispose();
+        taluno= new Aluno(obj);
+        taluno.setVisible(true);
         
     }//GEN-LAST:event_tabelaclienteMouseClicked
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         try{
-            ClientesDAO dao = new ClientesDAO();
-            List<Clientes> listarclientes = dao.listarClientes();
+            AlunosDAO dao = new AlunosDAO();
+            List<Alunos> listarclientes = dao.listarAlunos();
             
             
             DefaultTableModel modelo = (DefaultTableModel) tabelacliente.getModel();
             modelo.setNumRows(0);
-            for(Clientes lc : listarclientes){
+            for(Alunos lc : listarclientes){
                 modelo.addRow(new Object[]{
                     lc.getId(),
                     lc.getNome(),

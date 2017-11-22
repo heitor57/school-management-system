@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javabeans.Professores;
+import javabeans.Matriculas;
 import javax.swing.JOptionPane;
 import jdbc.ConectionFactory;
 
@@ -19,23 +19,35 @@ import jdbc.ConectionFactory;
  *
  * @author Suporte
  */
-public class ProfessoresDAO {
+public class MatriculasDAO {
     private Connection conecta;
-    public ProfessoresDAO(){
+    public MatriculasDAO(){
         this.conecta = new ConectionFactory().conecta();
     }
-    public List<Professores> listarProfessores(){
+    public int getProfessor(String nome){
         try{
-            List<Professores> lista = new ArrayList<Professores>();
-            String Sql = "select * from professores ORDER BY \"P_ID\" ";
+            String Sql = "SELECT * FROM professores WHERE \"P_NOME\" = ?";
+            PreparedStatement stmt = conecta.prepareStatement(Sql);
+            stmt.setString(1,nome);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            return rs.getInt("P_ID");
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(null,e);
+        }
+        return -1;
+    }
+    
+    public List<Matriculas> listarMatriculas(){
+        try{
+            List<Matriculas> lista = new ArrayList<Matriculas>();
+            String Sql = "select * from matricula ORDER BY \"A_ID\" ";
             PreparedStatement stmt = conecta.prepareStatement(Sql);
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
-                Professores c = new Professores();
-                c.setId(rs.getInt("P_ID"));
-                c.setNome(rs.getString("P_NOME"));
-                c.setEmail(rs.getString("P_EMAIL"));
-                c.setTelefone(rs.getString("P_TELEFONE"));
+                Matriculas c = new Matriculas();
+                c.setDid(rs.getInt("D_ID"));
+                c.setAid(rs.getInt("A_ID"));
                 lista.add(c);
             }
         
@@ -44,20 +56,18 @@ public class ProfessoresDAO {
             throw new RuntimeException(erro);
         }
     }
-    public List<Professores> listarProfessoresPorNome(String nome){
+    public List<Matriculas> listarMatriculasPorNome(String nome){
         try{
-            List<Professores> lista = new ArrayList<Professores>();
-            String Sql="select * from professores where \"P_NOME\" like ?";
+            List<Matriculas> lista = new ArrayList<Matriculas>();
+            String Sql="select * from matricula where \"D_NOME\" like ?";
             PreparedStatement stmt = conecta.prepareStatement(Sql);
             stmt.setString(1,"%"+nome+"%");
             
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
-                Professores c = new Professores();
-                c.setId(rs.getInt("P_ID"));
-                c.setNome(rs.getString("P_NOME"));
-                c.setEmail(rs.getString("P_EMAIL"));
-                c.setTelefone(rs.getString("P_TELEFONE"));
+                Matriculas c = new Matriculas();
+                c.setAid(rs.getInt("D_ID"));
+                c.setDid(rs.getInt("A_ID"));
                 lista.add(c);
             }
             return lista;
@@ -65,12 +75,47 @@ public class ProfessoresDAO {
             throw new RuntimeException(erro);
         }
     }
-    public void removerProfessor(Professores obj)
+    
+    public void removerMatricula(Matriculas obj)
     {
         try{
-            String cmdsql = "DELETE FROM professores WHERE \"P_ID\"=?";
+            String cmdsql = "DELETE FROM matricula WHERE \"A_ID\"=? AND \"D_ID\"=?";
             PreparedStatement stmt = conecta.prepareStatement(cmdsql);
-            stmt.setInt(1, obj.getId());
+            stmt.setInt(1, obj.getAid());
+            stmt.setInt(2, obj.getDid());
+            stmt.execute();
+            stmt.close();
+            
+        }catch(SQLException erro){
+           throw new RuntimeException(erro); 
+        }
+    }
+    
+    public void cadastrarMatricula(Matriculas obj)
+    {
+        try{
+            String cmdsql = "INSERT INTO matricula(\"A_ID\",\"D_ID\") VALUES (?,?)";
+            PreparedStatement stmt = conecta.prepareStatement(cmdsql);
+
+            stmt.setInt(1, obj.getAid());
+            stmt.setInt(2, obj.getDid());
+            stmt.execute();
+            
+            stmt.close();
+            
+        }catch(SQLException erro){
+           throw new RuntimeException(erro); 
+        }
+    }
+    public void alterarMatricula(Matriculas obj, String alunoupd, String disciplinaupd)
+    {
+        try{
+            String cmdsql = "update matricula set \"A_ID\"=?,\"D_ID\"=? where \"A_ID\"=? AND \"D_ID\"=? ";
+            PreparedStatement stmt = conecta.prepareStatement(cmdsql);
+            stmt.setInt(1, obj.getAid());
+            stmt.setInt(2, obj.getDid());
+            stmt.setInt(3, Integer.parseInt(alunoupd));
+            stmt.setInt(4, Integer.parseInt(disciplinaupd));
             stmt.execute();
             
             stmt.close();
@@ -80,38 +125,4 @@ public class ProfessoresDAO {
         }
     }
     
-    public void cadastrarProfessor(Professores obj)
-    {
-        try{
-            String cmdsql = "INSERT INTO professores(\"P_NOME\",\"P_EMAIL\",\"P_TELEFONE\") VALUES (?,?,?)";
-            PreparedStatement stmt = conecta.prepareStatement(cmdsql);
-
-            stmt.setString(1, obj.getNome());
-            stmt.setString(2, obj.getEmail());
-            stmt.setString(3, obj.getTelefone());
-            stmt.execute();
-            
-            stmt.close();
-            
-        }catch(SQLException erro){
-           throw new RuntimeException(erro); 
-        }
-    }
-    public void alterarProfessor(Professores obj)
-    {
-        try{
-            String cmdsql = "update professores set \"P_NOME\"=?,\"P_EMAIL\"=?,\"P_TELEFONE\"=? where \"P_ID\"=?";
-            PreparedStatement stmt = conecta.prepareStatement(cmdsql);
-            stmt.setString(1, obj.getNome());
-            stmt.setString(2, obj.getEmail());
-            stmt.setString(3, obj.getTelefone());
-            stmt.setInt(4, obj.getId());
-            stmt.execute();
-            
-            stmt.close();
-            
-        }catch(SQLException erro){
-           throw new RuntimeException(erro); 
-        }
-    }
 }

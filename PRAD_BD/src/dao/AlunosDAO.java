@@ -44,6 +44,19 @@ public class AlunosDAO {
             throw new RuntimeException(erro);
         }
     }
+    public int getAluno(String nome){
+        try{
+            String Sql = "SELECT * FROM alunos WHERE \"A_NOME\" = ?";
+            PreparedStatement stmt = conecta.prepareStatement(Sql);
+            stmt.setString(1,nome);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            return rs.getInt("A_ID");
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(null,e);
+        }
+        return -1;
+    }
     public List<Alunos> listarAlunosPorNome(String nome){
         try{
             List<Alunos> lista = new ArrayList<Alunos>();

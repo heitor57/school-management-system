@@ -5,11 +5,11 @@
  */
 package layout;
 
-import dao.AlunosDAO;
+import dao.ProfessoresDAO;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
-import javabeans.Alunos;
+import javabeans.Professores;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -17,16 +17,16 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Suporte
  */
-public class Aluno extends javax.swing.JDialog {
-    AlunosDAO dao;
+public class Professor extends javax.swing.JDialog {
+    ProfessoresDAO dao;
     /**
      * Creates new form Cidade
      */
-    public Aluno(java.awt.Frame parent, boolean modal) {
+    public Professor(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
-    public Aluno(Alunos obj){
+    public Professor(Professores obj){
         initComponents();
         txtcodigo.setText(String.valueOf(obj.getId()));
         txtnome.setText(obj.getNome());
@@ -60,7 +60,7 @@ public class Aluno extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                Aluno dialog = new Aluno(new javax.swing.JFrame(), true);
+                Professor dialog = new Professor(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -97,7 +97,7 @@ public class Aluno extends javax.swing.JDialog {
         btremover = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Aluno");
+        setTitle("Professor");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowActivated(java.awt.event.WindowEvent evt) {
                 formWindowActivated(evt);
@@ -332,10 +332,10 @@ public class Aluno extends javax.swing.JDialog {
     void Remover(){
         try{
             
-            Alunos obj = new Alunos();
+            Professores obj = new Professores();
             obj.setId(Integer.parseInt(txtcodigo.getText()));
-            dao = new AlunosDAO();
-            dao.removerAluno(obj);
+            dao = new ProfessoresDAO();
+            dao.removerProfessor(obj);
             
             JOptionPane.showMessageDialog(null,"Operação feita realizado com sucesso");
         } catch(Exception e){
@@ -346,12 +346,12 @@ public class Aluno extends javax.swing.JDialog {
     void Salvar(){
         try{
             
-            Alunos obj = new Alunos();
+            Professores obj = new Professores();
             obj.setNome(txtnome.getText());
             obj.setEmail(txtemail1.getText());
             obj.setTelefone(txttelefone.getText());
-            dao = new AlunosDAO();
-            dao.cadastrarAluno(obj);
+            dao = new ProfessoresDAO();
+            dao.cadastrarProfessor(obj);
             
             JOptionPane.showMessageDialog(null,"Cadastro realizado com sucesso");
         } catch(Exception e){
@@ -361,12 +361,12 @@ public class Aluno extends javax.swing.JDialog {
     }
     void Listar(){
         try{
-            AlunosDAO dao = new AlunosDAO();
-            List<Alunos> listaralunos = dao.listarAlunos();
+            ProfessoresDAO dao = new ProfessoresDAO();
+            List<Professores> listaralunos = dao.listarProfessores();
             DefaultTableModel modelo = (DefaultTableModel) tabelaalunos.getModel();
             modelo.setNumRows(0);
             
-            for(Alunos lc : listaralunos){
+            for(Professores lc : listaralunos){
                 modelo.addRow(new Object[]{
                         lc.getId(),
                         lc.getNome(),
@@ -380,14 +380,14 @@ public class Aluno extends javax.swing.JDialog {
     }
     void Atualizar(){
         try{
-            Alunos obj = new Alunos();
+            Professores obj = new Professores();
             obj.setId(Integer.parseInt(txtcodigo.getText()));
             obj.setNome(txtnome.getText());
             obj.setEmail(txtemail1.getText());
             obj.setTelefone(txttelefone.getText());
             
-            dao = new AlunosDAO();
-            dao.alterarAluno(obj);
+            dao = new ProfessoresDAO();
+            dao.alterarProfessor(obj);
             JOptionPane.showMessageDialog(null,"Dados alterados com sucesso");
             
         } catch(Exception e){
@@ -397,12 +397,12 @@ public class Aluno extends javax.swing.JDialog {
     }
     void Buscar(){
         try{
-            AlunosDAO dao = new AlunosDAO();
-            List<Alunos> listarclientes = dao.listarAlunosPorNome(txtnomebusca.getText());
+            ProfessoresDAO dao = new ProfessoresDAO();
+            List<Professores> listarclientes = dao.listarProfessoresPorNome(txtnomebusca.getText());
             DefaultTableModel modelo = (DefaultTableModel) tabelaalunos.getModel();
             modelo.setNumRows(0);
             
-            for(Alunos lc : listarclientes){
+            for(Professores lc : listarclientes){
                 txtcodigo.setText(String.valueOf((lc.getId())));
                 txtnome.setText(lc.getNome());
                 txtemail1.setText(lc.getEmail());
